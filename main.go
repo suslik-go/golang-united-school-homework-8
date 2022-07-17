@@ -41,15 +41,11 @@ func Perform(args Arguments, writer io.Writer) error {
 		return errors.New("-fileName flag has to be specified")
 	}
 
-	if args["item"] == "" {
-		return errors.New("-item flag has to be specified")
-	}
-
 	switch {
 	case args["operation"] == "add":
-		add(user, args["fileName"])
+		return add(args)
 	case args["operation"] == "list":
-		writer.Write(list(args["fileName"]))
+		return list(args, writer)
 	case args["operation"] == "findById":
 		findById(user, args["fileName"])
 	case args["operation"] == "remove":
@@ -57,6 +53,7 @@ func Perform(args Arguments, writer io.Writer) error {
 	default:
 		return fmt.Errorf("Operation %s not allowed!", args["operation"])
 	}
+
 	return nil
 }
 
@@ -77,56 +74,65 @@ func parseArgs() Arguments {
 
 }
 
-func add(user User, fileName string) {
-	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0755)
+func add(args Arguments) error {
+
+	if args["item"] == "" {
+		return errors.New("-item flag has to be specified")
+	}
+
+	file, err := os.OpenFile(args["fileName"], os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
-		log.Fatal(err)
+		return errors.New(err.Error())
 	}
 	defer file.Close()
 
-	data, err := os.ReadFile(fileName)
+	data, err := os.ReadFile(args["fileName"])
 	if err != nil {
-		log.Fatal(err)
+		return errors.New(err.Error())
 	}
 	// decode
 	var users []User
 	jsonDecodeErr := json.Unmarshal(data, &users)
 	if jsonDecodeErr != nil {
-		//TODO
+		return errors.New("Failed to decode user data json ")
 	}
 
+	var user User
+	json.Unmarshal([]byte(args["item"]), &user)
 	users = append(users, user)
 
 	//encode
 	data, jsonEncodeErr := json.Marshal(users)
 	if jsonEncodeErr != nil {
-		//TODO
+		return errors.New("Failed to encode users' data")
 	}
 
 	if _, err := file.Write(data); err != nil {
 		file.Close()
-		log.Fatal(err)
+		return errors.New("Failed to write data into the file")
 	}
 
-	if err := file.Close(); err != nil {
-		log.Fatal(err)
-	}
-
+	return nil
 }
 
-func list(fileName string) []byte {
-	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0755)
+func list(args Arguments, writer io.Writer) error {
+	if args["fileName"] == "" {
+		return errors.New("-fileName flag has to be specified")
+	}
+
+	file, err := os.OpenFile(args["fileName"], os.O_RDWR|os.O_CREATE, 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	data, err := os.ReadFile(fileName)
+	data, err := os.ReadFile(args["fileName"])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return data
+	writer.Write(data)
+	return nil
 }
 
 func findById(user User, fileName string) User {
