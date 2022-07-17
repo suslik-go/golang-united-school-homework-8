@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag" //command line parsing
 	"fmt"
 	"io"
@@ -32,6 +33,18 @@ func Perform(args Arguments, writer io.Writer) error {
 	json.Unmarshal([]byte(args["item"]), &user)
 	//fmt.Printf("Id: %d, Email: %s, Age: %d", user.Id, user.Email, user.Age)
 
+	if args["operation"] == "" {
+		return errors.New("-operation flag has to be specified")
+	}
+
+	if args["fileName"] == "" {
+		return errors.New("-fileName flag has to be specified")
+	}
+
+	if args["item"] == "" {
+		return errors.New("-item flag has to be specified")
+	}
+
 	switch {
 	case args["operation"] == "add":
 		add(user, args["fileName"])
@@ -41,6 +54,8 @@ func Perform(args Arguments, writer io.Writer) error {
 		findById(user, args["fileName"])
 	case args["operation"] == "remove":
 		remove(user, args["fileName"])
+	default:
+		return fmt.Errorf("Operation %s not allowed!", args["operation"])
 	}
 	return nil
 }

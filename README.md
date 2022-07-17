@@ -5,7 +5,8 @@ add
 list
 findById
 remove`
-Users' list should be stored in the json file. When you start your application and try to perform some operations, existing file should be used or new one should be created if it does not exist.
+Users' list should be stored in the json file. 
+When you start your application and try to perform some operations, existing file should be used or new one should be created if it does not exist.
 Example of the json file (users.json):
 `[{id: "1", email: «test@test.com», age: 31}, {id: "2", email: «test2@test.com», age: 41}]`
 In the `main.go` file you can find a function called Perform(args Arguments, writer io.Writer) error.
