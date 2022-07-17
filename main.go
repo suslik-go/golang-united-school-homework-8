@@ -12,9 +12,9 @@ import (
 type Arguments map[string]string
 
 type User struct {
-	Id    int
-	Email string
-	Age   int
+	id    int
+	email string
+	age   int
 }
 
 //usage: `./main.go -operation «add» -item ‘{«id»: "1", «email»: «email@test.com», «age»: 23}’ -fileName «users.json»`
@@ -30,7 +30,7 @@ func Perform(args Arguments, writer io.Writer) error {
 
 	var user User
 	json.Unmarshal([]byte(args["item"]), &user)
-	fmt.Printf("Id: %d, Email: %s, Age: %d", user.Id, user.Email, user.Age)
+	//fmt.Printf("Id: %d, Email: %s, Age: %d", user.Id, user.Email, user.Age)
 
 	switch {
 	case args["operation"] == "add":
@@ -133,7 +133,7 @@ func findById(user User, fileName string) User {
 	}
 
 	for _, val := range users {
-		if val.Id == user.Id {
+		if val.id == user.id {
 			return user
 		}
 	}
@@ -157,6 +157,6 @@ func remove(user User, fileName string) {
 	if jsonDecodeErr != nil {
 		fmt.Println("error:", jsonDecodeErr)
 	}
-	var id int = int(user.Id)
-	users = append(users[:id], users[id+1:]...)
+	var Id int = int(user.id)
+	users = append(users[:Id], users[Id+1:]...)
 }
