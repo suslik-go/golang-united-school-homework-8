@@ -92,7 +92,7 @@ func add(user User, fileName string) {
 	var users []User
 	jsonDecodeErr := json.Unmarshal(data, &users)
 	if jsonDecodeErr != nil {
-		fmt.Println("error:", jsonDecodeErr)
+		//TODO
 	}
 
 	users = append(users, user)
@@ -100,7 +100,7 @@ func add(user User, fileName string) {
 	//encode
 	data, jsonEncodeErr := json.Marshal(users)
 	if jsonEncodeErr != nil {
-		fmt.Println("error:", jsonEncodeErr)
+		//TODO
 	}
 
 	if _, err := file.Write(data); err != nil {
