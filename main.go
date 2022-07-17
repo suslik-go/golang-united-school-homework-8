@@ -8,14 +8,15 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 )
 
 type Arguments map[string]string
 
 type User struct {
-	id    int
+	id    string
 	email string
-	age   int
+	age   string
 }
 
 //usage: `./main.go -operation «add» -item ‘{«id»: "1", «email»: «email@test.com», «age»: 23}’ -fileName «users.json»`
@@ -98,7 +99,10 @@ func add(args Arguments) error {
 	}
 
 	var user User
-	json.Unmarshal([]byte(args["item"]), &user)
+	fmt.Println(args["item"])
+	myjson := `{"id":"1","email":"test@test.com","age":34}`
+	json.Unmarshal([]byte(myjson), &user)
+	fmt.Printf(" blya %s %s %s", user.id, user.email, user.age)
 	users = append(users, user)
 
 	//encode
@@ -178,6 +182,6 @@ func remove(user User, fileName string) {
 	if jsonDecodeErr != nil {
 		fmt.Println("error:", jsonDecodeErr)
 	}
-	var Id int = int(user.id)
+	Id, _ := strconv.Atoi(user.id)
 	users = append(users[:Id], users[Id+1:]...)
 }
